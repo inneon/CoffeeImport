@@ -10,6 +10,8 @@ namespace CommunityCoffeeImport.TableDataSource
 
 		string GetNextLine();
 
+		string[] GetNextLineCells();
+
 		List<ColumnDefinition> Reorder(List<ColumnDefinition> columnDefinitions);
 	}
 }

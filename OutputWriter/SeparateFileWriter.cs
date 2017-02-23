@@ -12,11 +12,11 @@ namespace CommunityCoffeeImport.OutputWriter
 
 		public void Write()
 		{
-			string outputFile = $"Data{Path.DirectorySeparatorChar}Output{Path.DirectorySeparatorChar}{TableName}.sql";
+			string outputFile = Path.Combine(Parameters.Singleton.OutputFolder, $"{TableName}.sql");
 			WriteFile(outputFile, CreateScript);
-			outputFile = $"Data{Path.DirectorySeparatorChar}Output{Path.DirectorySeparatorChar}{TableDefinition}.fmt";
+			outputFile = Path.Combine(Parameters.Singleton.OutputFolder, $"{TableDefinition}.sql");
 			WriteFile(outputFile, Format);
-			outputFile = $"Data{Path.DirectorySeparatorChar}Output{Path.DirectorySeparatorChar}{TableName}Insert.sql";
+			outputFile = Path.Combine(Parameters.Singleton.OutputFolder, $"{TableName}Insert.sql");
 			WriteFile(outputFile, BulkInsertScript);
 		}
 		

@@ -7,6 +7,7 @@ namespace CommunityCoffeeImport
 		private readonly Dictionary<string, SqlType> typeMapping = new Dictionary<string, SqlType> {
 			{ "CLNT", SqlType.varchar },
 			{ "NUMC", SqlType.@int },
+			{ "INT2", SqlType.@int },
 			{ "INT4", SqlType.@int },
 			{ "CUKY", SqlType.varchar },
 			{ "CHAR", SqlType.varchar },
@@ -17,7 +18,8 @@ namespace CommunityCoffeeImport
 			{ "TIMESTAMP",SqlType.bigint },
 			{ "DATS",SqlType.varchar },
 			{ "TIMS",SqlType.varchar },
-			{ "LANG",SqlType.varchar }
+			{ "LANG",SqlType.varchar },
+			{ "RAW",SqlType.varchar }
 		};
 
 		public string Field { get; set; }

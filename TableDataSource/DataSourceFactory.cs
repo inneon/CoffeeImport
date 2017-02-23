@@ -29,7 +29,7 @@ namespace CommunityCoffeeImport.TableDataSource
 		{
 			ExcelTableDataSource result = null;
 			
-			string fileName = Path.Combine(Directory.GetCurrentDirectory(), "Data", "MasterData.xlsx");
+			string fileName = Path.Combine(Parameters.Singleton.DataFolder, Parameters.Singleton.MasterDataFolder);
 			byte[] file = File.ReadAllBytes(fileName);
 			MemoryStream stream = null;
 			ExcelPackage package = null;
@@ -49,14 +49,13 @@ namespace CommunityCoffeeImport.TableDataSource
 				}
 			}
 			
-
 			return result;
 		}
 
 		private ITableDataSource TryLoadTextFile(string tableName)
 		{
 			TextFileDataSource result = null;
-			string fileName = Path.Combine("Data", $"{tableName}.txt");
+			string fileName = Path.Combine(Parameters.Singleton.DataFolder, $"{tableName}.txt");
 			if (File.Exists(fileName)) {
 				result = new TextFileDataSource(fileName);
 				disposables.Add(result);

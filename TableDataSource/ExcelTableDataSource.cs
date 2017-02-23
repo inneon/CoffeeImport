@@ -39,7 +39,17 @@ namespace CommunityCoffeeImport.TableDataSource
 		{
 			string result = null;
 			if (row < maxRows) {
-				result = string.Join(",", GetRowValues());
+				result = string.Join(",", GetRowValues(true));
+				row++;
+			}
+			return result;
+		}
+
+		public string[] GetNextLineCells()
+		{
+			string[] result = null;
+			if (row < maxRows) {
+				result = GetRowValues(false).ToArray();
 				row++;
 			}
 			return result;
@@ -52,7 +62,7 @@ namespace CommunityCoffeeImport.TableDataSource
 			return result;
 		}
 
-		private IEnumerable<string> GetRowValues()
+		private IEnumerable<string> GetRowValues(bool requote)
 		{
 			for (int i = 0; i < grid.GetLength(1); i++) {
 				string item = excelRange[row+1, i+1].Text;
@@ -73,16 +83,16 @@ namespace CommunityCoffeeImport.TableDataSource
 						item = item.PadLeft(length, '0');
 					}
 				}
-				if (definition.DataType == "LANG") {
+				if (definition.DataType == "LANG" && item.Length > 1) {
 					// hack - but whatevs, right?
 					item = item.Substring(0, 1);
-				} else if (definition.DataElement == "SCOPE_CV") {
+				} else if (definition.DataElement == "SCOPE_CV" && item.Length > 2) {
 					item = item.Substring(0, 2);
 				}
 
 				if ((definition.SqlDataType == SqlType.@int || definition.SqlDataType == SqlType.@decimal) && item.ToString() == string.Empty) {
 					item = "null";
-				} else if (definition.SqlDataType == SqlType.varchar || definition.DataType == "NUMC") {
+				} else if ((definition.SqlDataType == SqlType.varchar || definition.DataType == "NUMC") && requote) {
 					item = $"\"{item}\"";
 				}
 				

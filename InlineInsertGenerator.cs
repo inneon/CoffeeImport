@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using CommunityCoffeeImport.TableDataSource;
 
 namespace CommunityCoffeeImport
@@ -26,24 +27,25 @@ namespace CommunityCoffeeImport
 			StringBuilder insertBuilder = new StringBuilder();
 			
 			bool read = true;
-			string line;
+			IEnumerable<string> line;
 
 			while (read) {
-				line = tableDataSource.GetNextLine();
+				line = tableDataSource.GetNextLineCells();
 				read = line != null;
 
 				if (read) {
 					insertBuilder.AppendLine($"INSERT INTO {tableName} ({insertColumnNames}) VALUES (");
-					IEnumerable<string> cells = LineParser.Parse(line, LineParser.ParseOptions.RemoveQuotes).ToList();
-					if (cells.Count() != columnDefinitions.Count()) {
-						throw new NotSupportedException($"Row has {cells.Count()} entries, but there are {columnDefinitions.Count} columns");
+					if (line.Count() != columnDefinitions.Count()) {
+						throw new NotSupportedException($"Row has {line.Count()} entries, but there are {columnDefinitions.Count} columns");
 					}
 
-					string values = string.Join(", ", cells.Zip(columnDefinitions, (val, def) => new {val, def})
+					Regex quoteEscape = new Regex("(^|[^'])'([^']|$)");
+
+					string values = string.Join(", ", line.Zip(columnDefinitions, (val, def) => new {val, def})
 						.Select(pair =>
 						{
 							string res = pair.val;
-							res = res.Replace("'", "''");
+							res = quoteEscape.Replace(res, "$1''$2");
 							if (pair.def.SqlDataType != SqlType.@int && pair.def.SqlDataType != SqlType.@decimal) {
 								res = $"'{res}'";
 							}

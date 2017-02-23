@@ -46,5 +46,10 @@ namespace CommunityCoffeeImport.TableDataSource
 				}
 			}
 		}
+
+		public string[] GetNextLineCells()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

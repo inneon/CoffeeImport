@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using CommunityCoffeeImport.LineMangler;
 using CommunityCoffeeImport.TableDataSource;
 
@@ -33,23 +29,15 @@ namespace CommunityCoffeeImport
 		public string BuildInsert()
 		{
 			StringBuilder bulkInsertBuilder = new StringBuilder();
-
-			string currentLocal = Directory.GetCurrentDirectory();
-			Regex folderMatcher = new Regex($"^[A-Z]{Path.VolumeSeparatorChar}\\{Path.DirectorySeparatorChar}(.*)");
-			var match = folderMatcher.Match(currentLocal);
-			if (!match.Success || match.Groups.Count <= 1) {
-				throw new NotSupportedException();
-			}
-			string folder = match.Groups[1].Value;
-			string currentNetworkFolder = $"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}DWDL-JONNY01{Path.DirectorySeparatorChar}{folder}{Path.DirectorySeparatorChar}Data{Path.DirectorySeparatorChar}Output";
+			string currentNetworkFolder = Parameters.Singleton.NetworkLocation;
 
 			List<string> fragmentFiles = new List<string>();
 			bool read = true;
 			int fileNumber = 0;
 			while (read) {
-				string fragmentName = $"{currentNetworkFolder}{Path.DirectorySeparatorChar}{importName}fragment{fileNumber}.csv";
+				string fragmentName = $"{importName}fragment{fileNumber}.csv";
 				fragmentFiles.Add(fragmentName);
-				using (StreamWriter writer = new StreamWriter(fragmentName)) {
+				using (StreamWriter writer = new StreamWriter(Path.Combine(Parameters.Singleton.OutputFolder, fragmentName))) {
 					for (int i = 0; (i < MaxBulkInsertRows) && read; i++) {
 						string line = tableDataSource.GetNextLine();
 						read = line != null;
@@ -67,10 +55,10 @@ namespace CommunityCoffeeImport
 
 			foreach (string fragmentFile in fragmentFiles) {
 				bulkInsertBuilder.AppendLine($"BULK INSERT {tableName}");
-				bulkInsertBuilder.AppendLine($"FROM '{fragmentFile}'");
+				bulkInsertBuilder.AppendLine($"FROM '{currentNetworkFolder}{Path.DirectorySeparatorChar}{fragmentFile}'");
 				bulkInsertBuilder.AppendLine("WITH (");
 				bulkInsertBuilder.AppendLine($"  FORMATFILE = '{currentNetworkFolder}{Path.DirectorySeparatorChar}{tableName}.fmt'");
-				//bulkInsertBuilder.AppendLine($"  ,ERRORFILE  = '{fragmentFile}.log'");
+				bulkInsertBuilder.AppendLine($"  --,ERRORFILE  = '{fragmentFile}.log'");
 				bulkInsertBuilder.AppendLine(");");
 			}
 

@@ -14,7 +14,7 @@ namespace CommunityCoffeeImport.ColumnDefinitionReader
 			XmlDocument document = new XmlDocument();
 			document.LoadXml(content);
 			foreach (XmlNode column in document["tbody"].ChildNodes) {
-				XmlElement columnName = column["td"]["a"];
+				XmlElement columnName = column["td"]["a"] ?? column["td"]["span"];
 				if (columnName != null) {
 					bool keyColumn = column.Attributes["class"].InnerText == "keyField";
 					string decimalsAndLength = column.ChildNodes[3]?.InnerText ?? "";
