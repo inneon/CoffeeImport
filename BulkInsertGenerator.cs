@@ -29,7 +29,7 @@ namespace CommunityCoffeeImport
 		public string BuildInsert()
 		{
 			StringBuilder bulkInsertBuilder = new StringBuilder();
-			string currentNetworkFolder = Parameters.Singleton.NetworkLocation;
+			string currentNetworkFolder = Parameters.Singleton.BulkInsertPublicLocation;
 
 			List<string> fragmentFiles = new List<string>();
 			bool read = true;

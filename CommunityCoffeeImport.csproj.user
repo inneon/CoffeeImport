@@ -4,6 +4,7 @@
     <ProjectView>ProjectFiles</ProjectView>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>mara.json</StartArguments>
+    <StartArguments>Inputs.json</StartArguments>
+    <StartWorkingDirectory>C:\ImportScripts</StartWorkingDirectory>
   </PropertyGroup>
 </Project>

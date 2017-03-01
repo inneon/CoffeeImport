@@ -11,11 +11,11 @@ namespace CommunityCoffeeImport
 
 		public string TableDefinitionFolder { get; set; }
 
-		public string MasterDataFolder { get; set; }
+		public string MasterDataFile { get; set; }
 
 		public string OutputFolder { get; set; }
 
-		public string NetworkLocation { get; set; }
+		public string BulkInsertPublicLocation { get; set; }
 
 		public string CreateFileName { get; set; }
 

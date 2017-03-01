@@ -55,11 +55,11 @@ namespace CommunityCoffeeImport
 					writer.BulkInsertScript = bulkInsert;
 					writer.Write();
 				}
+				Console.WriteLine("Completed all tables successfully");
 			} catch (Exception e) {
 				Console.WriteLine(e);
 				Console.ReadKey();
 			}
-			Console.WriteLine("Completed all tables successfully");
 		}
 
 		private static bool ReadSettings(string[] args)
@@ -94,6 +94,34 @@ namespace CommunityCoffeeImport
 				return false;
 			}
 
+			if (string.IsNullOrEmpty(Parameters.Singleton.BulkInsertPublicLocation)) {
+				Console.WriteLine("Bulk insert public location is not set.");
+				return false;
+			}
+			if (string.IsNullOrEmpty(Parameters.Singleton.CreateFileName)) {
+				Console.WriteLine("Create file name is not set.");
+				return false;
+			}
+			if (string.IsNullOrEmpty(Parameters.Singleton.DataFolder)) {
+				Console.WriteLine("Data folder is not set.");
+				return false;
+			}
+			if (string.IsNullOrEmpty(Parameters.Singleton.InsertFileName)) {
+				Console.WriteLine("Insert file name is not set.");
+				return false;
+			}
+			if (string.IsNullOrEmpty(Parameters.Singleton.MasterDataFile)) {
+				Console.WriteLine("Warning (non-fatal): Master data file is not set.");
+			}
+			if (string.IsNullOrEmpty(Parameters.Singleton.OutputFolder)) {
+				Console.WriteLine("Output folder is not set.");
+				return false;
+			}
+			if (string.IsNullOrEmpty(Parameters.Singleton.TableDefinitionFolder)) {
+				Console.WriteLine("Table definition folder is not set.");
+				return false;
+			}
+
 			if (!Directory.Exists(Parameters.Singleton.DataFolder)) {
 				Console.WriteLine($"The input file specifies the data folder {Parameters.Singleton.DataFolder}, but this does not exist.");
 				return false;
@@ -106,10 +134,6 @@ namespace CommunityCoffeeImport
 				Console.WriteLine($"The input file specifies the output folder {Parameters.Singleton.OutputFolder}, but this does not exist.");
 				return false;
 			}
-			/*if (!Directory.Exists(Parameters.Singleton.BulkInsertFolder)) {
-				Console.WriteLine($"The input file specifies the bulk insert folder {Parameters.Singleton.BulkInsertFolder}, but this does not exist.");
-				return false;
-			}*/
 			string createFileWritable = CheckFileWritable(Parameters.Singleton.CreateFileName);
 			if (!string.IsNullOrEmpty(createFileWritable)) {
 				Console.WriteLine($"The specified file for the script creating tables ({Parameters.Singleton.CreateFileName}) could not be written. The error was:");
@@ -138,7 +162,8 @@ namespace CommunityCoffeeImport
 			}
 
 			try {
-				File.Create(fileName);
+				using (File.Create(fileName)) {
+				}
 			} catch (Exception e) {
 				return e.Message;
 			}

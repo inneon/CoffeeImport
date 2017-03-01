@@ -29,26 +29,28 @@ namespace CommunityCoffeeImport.TableDataSource
 		{
 			ExcelTableDataSource result = null;
 			
-			string fileName = Path.Combine(Parameters.Singleton.DataFolder, Parameters.Singleton.MasterDataFolder);
-			byte[] file = File.ReadAllBytes(fileName);
-			MemoryStream stream = null;
-			ExcelPackage package = null;
-			try {
-				stream = new MemoryStream(file);
-				package = new ExcelPackage(stream);
-				ExcelWorksheet sheet = package.Workbook.Worksheets[tableName];
-				if (sheet != null) {
-					result = new ExcelTableDataSource(sheet);
-					disposables.Add(package);
-					disposables.Add(stream);
-				}
-			} finally {
-				if (result == null) {
-					stream?.Dispose();
-					package?.Dispose();
+			if (!string.IsNullOrEmpty(Parameters.Singleton.MasterDataFile)) {
+				string fileName = Path.Combine(Parameters.Singleton.DataFolder, Parameters.Singleton.MasterDataFile);
+				byte[] file = File.ReadAllBytes(fileName);
+				MemoryStream stream = null;
+				ExcelPackage package = null;
+				try {
+					stream = new MemoryStream(file);
+					package = new ExcelPackage(stream);
+					ExcelWorksheet sheet = package.Workbook.Worksheets[tableName];
+					if (sheet != null) {
+						result = new ExcelTableDataSource(sheet);
+						disposables.Add(package);
+						disposables.Add(stream);
+					}
+				} finally {
+					if (result == null) {
+						stream?.Dispose();
+						package?.Dispose();
+					}
 				}
 			}
-			
+
 			return result;
 		}
 

@@ -58,7 +58,13 @@ namespace CommunityCoffeeImport.TableDataSource
 		public List<ColumnDefinition> Reorder(List<ColumnDefinition> cols)
 		{
 			List<ColumnDefinition> result = columnNames.Select(name =>
-				cols.Single(col => col.Field == name)).ToList();
+			{
+				try {
+					return cols.Single(col => col.Field == name);
+				} catch (InvalidOperationException e) {
+					throw new NotSupportedException($"Column \"{name}\" in the source data cannot be matched to a column in the metadata.", e);
+				}
+			}).ToList();
 			return result;
 		}
 
