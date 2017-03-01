@@ -101,10 +101,10 @@ namespace CommunityCoffeeImport
 			SqlType sqlType = arg.SqlDataType;
 
 			if (columnIndex == columnDefinitions.Count() - 1) {
-				delimeter = "\\r\\n";
+				delimeter = Parameters.Singleton.ClosingComma ? ",\\r\\n" : "\\r\\n";
 			}
 			
-			bool quoteDelimited = sqlType == SqlType.varchar || dataType == "NUMC";
+			bool quoteDelimited = IsColumnQuoteDelimited(arg);
 			dataType = formatMapping[sqlType];
 			if (dataType == formatMapping[SqlType.@decimal]) {
 				length = (arg.Length + arg.Decimals).ToString();
@@ -116,9 +116,7 @@ namespace CommunityCoffeeImport
 			}
 			if (columnIndex + 1 < columnDefinitions.Count()) {
 				ColumnDefinition nextArg = columnDefinitions[columnIndex + 1];
-				string nextDataType = nextArg.DataType;
-				SqlType nextSqlType = nextArg.SqlDataType;
-				if ((nextSqlType == SqlType.varchar || nextDataType == "NUMC") && quoteEnclosed) {
+				if (IsColumnQuoteDelimited(nextArg) && quoteEnclosed) {
 					delimeter = $"{delimeter}\\\"";
 				}
 			}
@@ -129,10 +127,15 @@ namespace CommunityCoffeeImport
 			return result;
 		}
 
-		private void DetermineLeadingQuote(ColumnDefinition columnDefinition)
+		private void DetermineLeadingQuote(ColumnDefinition firstColumnDefinition)
 		{
-			SqlType sqlType = columnDefinition.SqlDataType;
-			leadingQuote = (sqlType == SqlType.varchar) && quoteEnclosed;
+			leadingQuote = IsColumnQuoteDelimited(firstColumnDefinition) && quoteEnclosed;
+		}
+
+		private bool IsColumnQuoteDelimited(ColumnDefinition col)
+		{
+			bool result = col.SqlDataType == SqlType.varchar || col.DataType == "NUMC" || Parameters.Singleton.NumericsAreQuoted;
+			return result;
 		}
 
 	}

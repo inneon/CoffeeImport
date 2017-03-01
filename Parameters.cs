@@ -21,6 +21,10 @@ namespace CommunityCoffeeImport
 
 		public string InsertFileName { get; set; }
 
+		public bool NumericsAreQuoted { get; set; }
+
+		public bool ClosingComma { get; set; }
+
 		public string[] Tables { get; set; }
 	}
 }
