@@ -53,6 +53,8 @@
   <ItemGroup>
     <Compile Include="BulkInsertGenerator.cs" />
     <Compile Include="ColumnDefinition.cs" />
+    <Compile Include="ColumnDefinitionReader\ColumnDefinitionFactory.cs" />
+    <Compile Include="ColumnDefinitionReader\DB2LookReader.cs" />
     <Compile Include="ColumnDefinitionReader\IDefinitionReader.cs" />
     <Compile Include="ColumnDefinitionReader\RegexDefinitionReader.cs" />
     <Compile Include="CreateGenerator.cs" />

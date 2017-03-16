@@ -36,7 +36,7 @@ namespace CommunityCoffeeImport
 					string create;
 					using (DataSourceFactory factory = new DataSourceFactory()) {
 						ITableDataSource source = factory.GetDataSourceForTable(tableName);
-						List<ColumnDefinition> colDefinition = ColumnDefinitions(tableDefinition)
+						List<ColumnDefinition> colDefinition = ColumnDefinitionFactory.GetColumnDefinitionsForTable(tableDefinition)
 							.Where(col => source.UsesColumn(col)).ToList();
 						List<ColumnDefinition> sourceOrderedColumnDefinitions = source.Reorder(colDefinition);
 						CreateGenerator createGenerator = new CreateGenerator(tableDefinition, colDefinition);
@@ -170,56 +170,7 @@ namespace CommunityCoffeeImport
 
 			return string.Empty;
 		}
-
-		private static List<ColumnDefinition> ColumnDefinitions(string tableDefinition)
-		{
-			string content;
-			Dictionary<string, IDefinitionReader> readersForExtension = new Dictionary<string, IDefinitionReader> {
-				{"rgx", new RegexDefinitionReader() },
-				{"xml", new HtmlDefinitionReader() },
-			};
-			List<ColumnDefinition> result = null;
-
-			foreach (KeyValuePair<string, IDefinitionReader> definitionReader in readersForExtension) {
-				string path = Path.Combine(Parameters.Singleton.TableDefinitionFolder, $"{tableDefinition}.{definitionReader.Key}");
-				if (File.Exists(path)) {
-
-					using (StreamReader reader = new StreamReader(path)) {
-						content = reader.ReadToEnd();
-					}
-					result = definitionReader.Value.LoadFromContent(content);
-					break;
-				}
-			}
-			if (result == null) {
-				throw new NotSupportedException($"No metadata file was found for table {tableDefinition}");
-			}
-
-			return result;
-		}
-
-		private static void WriteFile(string outputFile, string content)
-		{
-			if (File.Exists(outputFile)) {
-				File.Delete(outputFile);
-			}
-			using (StreamWriter writer = new StreamWriter(outputFile)) {
-				writer.WriteLine(content);
-			}
-		}
-
-		private static List<string> ReadLinesFromFile(string path)
-		{
-			List<string> lines = new List<string>();
-			using (StreamReader streamReader = new StreamReader(path)) {
-				string line;
-				while ((line = streamReader.ReadLine()) != null) {
-					lines.Add(line);
-				}
-			}
-			return lines;
-		}
-
+		
 		private static string CreateTableDefinition(string tableName)
 		{
 			string result;

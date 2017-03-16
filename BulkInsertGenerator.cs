@@ -16,7 +16,6 @@ namespace CommunityCoffeeImport
 		private readonly string importName;
 
 		private Dictionary<string, ILineMangler> lineManglers = new Dictionary<string, ILineMangler> {
-			{ "coep", new CoepLineMangler() },
 			{ "skat", new SkatManger() }
 		};
 
